@@ -23,4 +23,11 @@ class SolutionTest {
 
         assertEquals(exp,act);
     }
+
+    void solution4(){
+        int act = Solution.solution(9,24);
+        int exp = 1;
+
+        assertEquals(exp,act);
+    }
 }

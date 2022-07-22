@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: still having problems with left alignment checks
+
 /*
     Calculate the fewest moves needed to move from location on a chessboard to another
     RESTRICTIONS:
@@ -10,21 +12,20 @@ import java.util.Arrays;
 
 public class Solution {
     public static void main(String[] args) {
+        prettyPrint(9);
+
+        System.out.println(solution(9, 24));
+    }
+
+    private static void prettyPrint(int src) {
         for(int i = 0; i<8; i++){
             System.out.println("---------------------------------");
-//            System.out.println("Position input: "+i);
-//            int[] coords = convertToCoords(i);
-//            System.out.println("Coords output: "+Arrays.toString(coords));
-//            System.out.println("Reconversion to position output: "+convertToNum(coords));
             for (int j = 0; j < 8; j++) {
-                System.out.print(solution(54, i*8+j)+" | ");
+                System.out.print(solution(src, i*8+j)+" | ");
             }
             System.out.println();
         }
-
-        System.out.println(solution(54, 63));
     }
-
 
 
     public static int solution(int src, int dest) {
@@ -82,16 +83,20 @@ public class Solution {
         int eighthNewPos = convertToNum(new int[]{initCoords[0] + 1, initCoords[1] + 2});
 
         int[] positions = {firstNewPos, secondNewPos, thirdNewPos, fourthNewPos, fifthNewPos, sixthNewPos, seventhNewPos, eighthNewPos};
-
+//        System.out.println("Unpruned array: " + Arrays.toString(positions));
 
         pruneLR(positions, initCoords);
+//        System.out.println("Pruned, untrimmed array: "+Arrays.toString(positions));
+//        System.out.print("Trimmed array: ");
         for(int pos : positions){
             if(pos >=0 && pos<=63){
+//                System.out.print(pos+", ");
                 oneMovers.add(pos);
             }
             else{
             }
         }
+//        System.out.println();
 
         return oneMovers;
     }
@@ -115,13 +120,13 @@ public class Solution {
     //  the following methods adjust values in positions to prevent invalid moves left or right
     // values are set to -1 so they are caught before being inserted into final arraylist
     private static void excludeOneLeft(int[] positions) {
-        positions[0] = -1;
-        positions[4] = -1;
+        positions[2] = -1;
+        positions[6] = -1;
     }
 
     private static void excludeTwoLeft(int[] positions) {
-        positions[2] = -1;
-        positions[6] = -1;
+        positions[0] = -1;
+        positions[4] = -1;
     }
 
     private static void excludeOneRight(int[] positions) {
