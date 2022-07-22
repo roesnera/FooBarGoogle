@@ -1,101 +1,117 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class Solution {
     public static void main(String[] args) {
-        System.out.println("Expected: [1,1]");
-        System.out.println(Arrays.toString(convertToCoords(9)));
 
-        System.out.println("Expected: 9");
-        System.out.println(convertToNum(convertToCoords(9)));
+        int[] numsArr = new int[47];
 
-        System.out.println("Expected: 3");
-        System.out.println(""+solution(0,1));
-    }
-
-
-
-    public static int solution(int src, int dest) {
-        //Your code here
-
-        // if src and dest are equal, return 0 moves
-        int numMoves = 0;
-        if(src == dest) {return numMoves;}
-
-
-        // create some structure to track possible current locations given number of moves made
-        // currently zero moves, so this only contains one entry: src
-        ArrayList<Integer> possibleLocations = new ArrayList<Integer>();
-        possibleLocations.add(src);
-
-
-        // could have used a for loop here but while loop makes more sense given unknown iterations
-        // each iteration through the loop represents branching out by one possible move
-        // loop will iterate until it finds a move that represents dest, then it will return numMoves
-        while(true){
-
-            // increment num moves at the start of each iteration
-            numMoves++;
-
-            // this represents the possible locations one square away from any possible current location, given numMoves
-            ArrayList<Integer> oneMovers = new ArrayList<Integer>();
-
-            for(int possibleLocation : possibleLocations){
-                oneMovers.addAll(getOneMove(possibleLocation));
-            }
-
-            // checks to see if dest is in oneMovers, if so then return
-            if(oneMovers.contains(dest)){
-                return numMoves;
-            }
-
-            // update possible current locations to reflect having made one more move
-            possibleLocations = oneMovers;
+        for(int i = -23; i<23; i++){
+            numsArr[i+23] = i;
         }
+
+        solution(numsArr);
     }
 
 
-    // returns an arraylist of possible, allowed moves given a starting location
-    private static ArrayList<Integer> getOneMove(int initPos){
-        ArrayList<Integer> oneMovers = new ArrayList<Integer>();
-        int[] initCoords = convertToCoords(initPos);
-        int firstNewPos = convertToNum(new int[]{initCoords[0] - 2, initCoords[1] - 1});
-        int secondNewPos = convertToNum(new int[]{initCoords[0] - 2, initCoords[1] + 1});
-        int thirdNewPos = convertToNum(new int[]{initCoords[0] - 1, initCoords[1] - 2});
-        int fourthNewPos = convertToNum(new int[]{initCoords[0] - 1, initCoords[1] + 2});
-        int fifthNewPos = convertToNum(new int[]{initCoords[0] + 2, initCoords[1] - 1});
-        int sixthNewPos = convertToNum(new int[]{initCoords[0] + 2, initCoords[1] + 1});
-        int seventhNewPos = convertToNum(new int[]{initCoords[0] + 1, initCoords[1] - 2});
-        int eighthNewPos = convertToNum(new int[]{initCoords[0] + 1, initCoords[1] + 2});
 
-        oneMovers.add(firstNewPos);
-        oneMovers.add(secondNewPos);
-        oneMovers.add(thirdNewPos);
-        oneMovers.add(fourthNewPos);
-        oneMovers.add(fifthNewPos);
-        oneMovers.add(sixthNewPos);
-        oneMovers.add(seventhNewPos);
-        oneMovers.add(eighthNewPos);
+    public static String solution(int[] xs) {
+        // Your code here
 
-        // if location is off the board, disregard
-        oneMovers.removeIf(pos -> pos < 0 || pos > 63);
-        return oneMovers;
+        // there's two problems here
+        // determining if it is possible to use an even number of, or zero, negative numbers
+        // finding the highest multiple given the above
+
+        int size = xs.length;
+        String ansStr = "";
+        int prod = 1;
+
+        // to assess the situation regarding presence of negatives
+        boolean oddNegatives = false;
+        int negatives = 0;
+
+        // to track smallest values, abs, pos, and neg
+        int smallestAbsVal = 0;
+        int smallestNegative = 0;
+        int smallestPositive = 0;
+
+        // to track smallest indices
+        int smallestAbsValI = -1;
+        int smallestNegativeI = -1;
+        int smallestPositiveI = -1;
+
+        // need to create arraylist to track indices of zero cells
+        ArrayList<Integer> zeroCells = new ArrayList<Integer>();
+
+
+        for (int i = 0; i < size; i++) {
+            int cell = xs[i];
+            System.out.println("Value of cell is: "+cell);
+            if(cell != 0) {
+                if (smallestAbsVal == 0) {
+                    smallestAbsVal = Math.abs(cell);
+                    smallestAbsValI = i;
+                } else if(Math.abs(cell)<smallestAbsVal) {
+                    smallestAbsVal = Math.abs(cell);
+                    smallestAbsValI = i;
+                }
+                if (cell < 0) {
+                    oddNegatives = !oddNegatives;
+                    negatives++;
+                    if(smallestNegative==0){
+                        smallestNegative = cell;
+                        smallestNegativeI = i;
+                    }
+                    if(cell > smallestNegative){
+                        smallestNegative = cell;
+                        smallestNegativeI = i;
+                    }
+                }
+                else {
+                    if(smallestPositive==0){
+                        smallestPositive = cell;
+                        smallestPositiveI = i;
+                    }
+                    if(cell < smallestPositive){
+                        smallestPositive = cell;
+                        smallestPositiveI = i;
+                    }
+                }
+            } else {
+                zeroCells.add(i);
+            }
+        }
+
+        System.out.println(
+                "Smallest Absolute Value: "+smallestAbsVal+"\n"+
+                "Smallest Absolute Value i: "+smallestAbsValI+"\n"+
+                "Smallest Positive Value: "+smallestPositive+"\n"+
+                "Smallest Positive Value i: "+smallestPositiveI+"\n"+
+                "Smallest Negative Value: "+smallestNegative+"\n"+
+                "Smallest Negative Value i: "+smallestNegativeI+"\n"+
+                "Odd Negatives boolean: "+oddNegatives+"\n"+
+                "Negative count: "+negatives+"\n"+
+                "Indices of zero: "+zeroCells.toString()
+        );
+
+        if(!oddNegatives&&zeroCells.size()==0){
+            prod = reduceOmitCells(smallestAbsValI, xs);
+        }
+        if(oddNegatives){
+
+        }
+
+
+        return ""+prod;
     }
 
-    // converts a single digit position to coordinates for easier move calculation
-    private static int[] convertToCoords(int pos){
-        int posLRPos = pos%8;
-        int posNSPos = pos/8;
-        int[] posCoords = {posNSPos, posLRPos};
-        return posCoords;
-    }
-
-    // converts coords back to single digit position for simpler data structure management
-    private static int convertToNum(int[] coords){
-        int row = coords[0];
-        int col = coords[1];
-        int pos = row*8 + col;
-        return pos;
+    private static int reduceOmitCells(int indexToOmit, int[] arrayToReduce) {
+        int prod = 1;
+        for (int i = 0; i < arrayToReduce.length; i++) {
+            if(i!=indexToOmit){
+                prod *= arrayToReduce[i];
+            }
+        }
+        return prod;
     }
 }
