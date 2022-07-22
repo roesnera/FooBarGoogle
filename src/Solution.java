@@ -6,20 +6,23 @@ import java.util.Arrays;
     RESTRICTIONS:
         can only move like a knight
         input is single digit, starting from 0-63 in the upper left-hand corner of the board
-
-
  */
 
 public class Solution {
     public static void main(String[] args) {
-        System.out.println("Expected: [1,1]");
-        System.out.println(Arrays.toString(convertToCoords(9)));
+        for(int i = 0; i<8; i++){
+            System.out.println("---------------------------------");
+//            System.out.println("Position input: "+i);
+//            int[] coords = convertToCoords(i);
+//            System.out.println("Coords output: "+Arrays.toString(coords));
+//            System.out.println("Reconversion to position output: "+convertToNum(coords));
+            for (int j = 0; j < 8; j++) {
+                System.out.print(solution(54, i*8+j)+" | ");
+            }
+            System.out.println();
+        }
 
-        System.out.println("Expected: 9");
-        System.out.println(convertToNum(convertToCoords(9)));
-
-        System.out.println("Expected: 3");
-        System.out.println(""+solution(0,1));
+        System.out.println(solution(54, 63));
     }
 
 
@@ -66,6 +69,7 @@ public class Solution {
 
     // returns an arraylist of possible, allowed moves given a starting location
     private static ArrayList<Integer> getOneMove(int initPos){
+//        System.out.println("Initial position of getOneMove(): " + initPos);
         ArrayList<Integer> oneMovers = new ArrayList<Integer>();
         int[] initCoords = convertToCoords(initPos);
         int firstNewPos = convertToNum(new int[]{initCoords[0] - 2, initCoords[1] - 1});
@@ -77,18 +81,74 @@ public class Solution {
         int seventhNewPos = convertToNum(new int[]{initCoords[0] + 1, initCoords[1] - 2});
         int eighthNewPos = convertToNum(new int[]{initCoords[0] + 1, initCoords[1] + 2});
 
-        oneMovers.add(firstNewPos);
-        oneMovers.add(secondNewPos);
-        oneMovers.add(thirdNewPos);
-        oneMovers.add(fourthNewPos);
-        oneMovers.add(fifthNewPos);
-        oneMovers.add(sixthNewPos);
-        oneMovers.add(seventhNewPos);
-        oneMovers.add(eighthNewPos);
+        int[] positions = {firstNewPos, secondNewPos, thirdNewPos, fourthNewPos, fifthNewPos, sixthNewPos, seventhNewPos, eighthNewPos};
 
-        // if location is off the board, disregard
-        oneMovers.removeIf(pos -> pos < 0 || pos > 63);
+
+        pruneLR(positions, initCoords);
+        for(int pos : positions){
+            if(pos >=0 && pos<=63){
+                oneMovers.add(pos);
+            }
+            else{
+            }
+        }
+
         return oneMovers;
+    }
+
+    // prevents from moving invalidly left or right
+    private static void pruneLR(int[] positions, int[] initCoords) {
+        if(twoCloseRight(initCoords)){
+            excludeTwoRight(positions);
+        }
+        if(oneCloseRight(initCoords)){
+            excludeOneRight(positions);
+        }
+        if(twoCloseLeft(initCoords)){
+            excludeTwoLeft(positions);
+        }
+        if(oneCloseLeft(initCoords)){
+            excludeOneLeft(positions);
+        }
+    }
+
+    //  the following methods adjust values in positions to prevent invalid moves left or right
+    // values are set to -1 so they are caught before being inserted into final arraylist
+    private static void excludeOneLeft(int[] positions) {
+        positions[0] = -1;
+        positions[4] = -1;
+    }
+
+    private static void excludeTwoLeft(int[] positions) {
+        positions[2] = -1;
+        positions[6] = -1;
+    }
+
+    private static void excludeOneRight(int[] positions) {
+        positions[3] = -1;
+        positions[7] = -1;
+    }
+
+    private static void excludeTwoRight(int[] positions) {
+        positions[1] = -1;
+        positions[5] = -1;
+    }
+
+    // the following methods check to see if the initial position is too close to the left or right
+    private static boolean twoCloseLeft(int[] initCoords) {
+        return initCoords[1]==0;
+    }
+
+    private static boolean oneCloseLeft(int[] initCoords) {
+        return initCoords[1]<=1;
+    }
+
+    private static boolean twoCloseRight(int[] initCoords) {
+        return initCoords[1]==7;
+    }
+
+    private static boolean oneCloseRight(int[] initCoords) {
+        return initCoords[1]>=6;
     }
 
     // converts a single digit position to coordinates for easier move calculation

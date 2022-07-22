@@ -16,4 +16,11 @@ class SolutionTest {
 
         assertEquals(exp, act);
     }
+
+    void solution3() {
+        int act = Solution.solution(54,63);
+        int exp = 4;
+
+        assertEquals(exp,act);
+    }
 }
