@@ -97,8 +97,15 @@ public class Solution {
         if(!oddNegatives&&zeroCells.size()==0){
             prod = reduceOmitCells(smallestAbsValI, xs);
         }
-        if(oddNegatives){
+        if(oddNegatives&&zeroCells.size()==0){
 
+        }
+        if(!oddNegatives&&zeroCells.size()>0){
+            int[] indicesToOmit = new int[zeroCells.size()];
+            for (int i = 0; i < zeroCells.size(); i++) {
+                indicesToOmit[i] = zeroCells.get(i);
+            }
+            prod = reduceOmitCells(indicesToOmit, xs);
         }
 
 
@@ -111,6 +118,16 @@ public class Solution {
             if(i!=indexToOmit){
                 prod *= arrayToReduce[i];
             }
+        }
+        return prod;
+    }
+    private static int reduceOmitCells(int[] indexToOmit, int[] arrayToReduce){
+        int prod = 1;
+        for(int ind : indexToOmit){
+            arrayToReduce[ind] = 1;
+        }
+        for (int i = 0; i < arrayToReduce.length; i++) {
+            prod *= arrayToReduce[i];
         }
         return prod;
     }
