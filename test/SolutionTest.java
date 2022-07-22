@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SolutionTest {
 
     @Test
-    void solution(){
+    void solution1(){
         String act = Solution.solution(new int[] {2,3,4,5,6});
         String exp = "360";
 
@@ -16,6 +16,14 @@ class SolutionTest {
     void solution2() {
         String act = Solution.solution(new int[] {2,0,2,2});
         String exp = "8";
+
+        assertEquals(exp,act);
+    }
+
+    @Test
+    void solution3() {
+        String act = Solution.solution(new int[] {-1,1,2,3});
+        String exp = "6";
 
         assertEquals(exp,act);
     }

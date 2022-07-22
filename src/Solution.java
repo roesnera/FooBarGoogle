@@ -98,7 +98,7 @@ public class Solution {
             prod = reduceOmitCells(smallestAbsValI, xs);
         }
         if(oddNegatives&&zeroCells.size()==0){
-
+            prod = reduceOmitCells(smallestNegativeI, xs);
         }
         if(!oddNegatives&&zeroCells.size()>0){
             int[] indicesToOmit = new int[zeroCells.size()];
