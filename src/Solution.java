@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+
+/*
+    Calculate the fewest moves needed to move from location on a chessboard to another
+    RESTRICTIONS:
+        can only move like a knight
+        input is single digit, starting from 0-63 in the upper left-hand corner of the board
+
+
+ */
 
 public class Solution {
     public static void main(String[] args) {
