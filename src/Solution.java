@@ -108,6 +108,24 @@ public class Solution {
             prod = reduceOmitCells(indicesToOmit, xs);
         }
 
+        /*
+            this calls for a recursive method that checks
+            whether the input array is better off ejecting the smallest positive or the smallest two negatives
+            if it is better off with the former, return the reduced value
+            if it is better off with the latter,
+                return the procedure run again, passing in the product of the two negatives, and the smallest positive
+            could be done with a while loop as well, but recursion is *probably* simpler logically
+         */
+        if(oddNegatives&&zeroCells.size()>0){
+            int[] indicesToOmit = new int[zeroCells.size()+1];
+            for (int i = 0; i < zeroCells.size(); i++) {
+                indicesToOmit[i] = zeroCells.get(i);
+            }
+            indicesToOmit[zeroCells.size()] = smallestNegativeI;
+            prod = reduceOmitCells(indicesToOmit, xs);
+        }
+
+        // what if the product of the two smallest negatives is lesser than the smallest positive?
 
         return ""+prod;
     }
