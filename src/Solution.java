@@ -1,19 +1,40 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// Use BigInteger for large number math
+import java.math.BigInteger;
+
 public class Solution {
     public static void main(String[] args) {
 
-        int[] numsArr = new int[47];
+//        int[] numsArr = new int[10];
 
-        for(int i = -23; i<23; i++){
-            numsArr[i+23] = i;
-        }
+        int[] numsArr = {-3976, 6871, 6663, 10381, -10875, 2270, -926, 12159, -6598, 4996};
 
-        solution(numsArr);
+//        for(int i = 0; i<10; i++){
+//            numsArr[i] = (int) Math.floor(Math.random()*30000)-15000;
+//        }
+
+        System.out.println(Arrays.toString(numsArr));
+
+        System.out.println(solution(numsArr));
     }
 
+/*
+    Still not passing two tests
+    I think there are two edge cases which it would not pass:
+        if the product of the three smallest negative numbers (or 5, etc.) is smaller than the smallest positive
+        in both odd and even numbered negative situations
 
+    To work around this:
+        track all the negatives vs all the positives and see
+        if the smallest 2 or 3 negatives multiplied are larger or smaller than the smallest positive
+
+        Have a function for each case that takes a positive value and an array of negatives
+        returns the greater of the two inputs
+        if it is the positive number, replace all negative sums with 1 before reducing
+        else, replace positive num with 1
+ */
 
     public static String solution(int[] xs) {
         // Your code here
@@ -24,7 +45,7 @@ public class Solution {
 
         int size = xs.length;
         String ansStr = "";
-        int prod = 1;
+        BigInteger prod = new BigInteger("1");
 
         // to assess the situation regarding presence of negatives
         boolean oddNegatives = false;
@@ -46,7 +67,7 @@ public class Solution {
 
         for (int i = 0; i < size; i++) {
             int cell = xs[i];
-            System.out.println("Value of cell is: "+cell);
+//            System.out.println("Value of cell is: "+cell);
             if(cell != 0) {
                 if (smallestAbsVal == 0) {
                     smallestAbsVal = Math.abs(cell);
@@ -82,20 +103,29 @@ public class Solution {
             }
         }
 
-        System.out.println(
-                "Smallest Absolute Value: "+smallestAbsVal+"\n"+
-                "Smallest Absolute Value i: "+smallestAbsValI+"\n"+
-                "Smallest Positive Value: "+smallestPositive+"\n"+
-                "Smallest Positive Value i: "+smallestPositiveI+"\n"+
-                "Smallest Negative Value: "+smallestNegative+"\n"+
-                "Smallest Negative Value i: "+smallestNegativeI+"\n"+
-                "Odd Negatives boolean: "+oddNegatives+"\n"+
-                "Negative count: "+negatives+"\n"+
-                "Indices of zero: "+zeroCells.toString()
-        );
+//        System.out.println(
+//                "Smallest Absolute Value: "+smallestAbsVal+"\n"+
+//                "Smallest Absolute Value i: "+smallestAbsValI+"\n"+
+//                "Smallest Positive Value: "+smallestPositive+"\n"+
+//                "Smallest Positive Value i: "+smallestPositiveI+"\n"+
+//                "Smallest Negative Value: "+smallestNegative+"\n"+
+//                "Smallest Negative Value i: "+smallestNegativeI+"\n"+
+//                "Odd Negatives boolean: "+oddNegatives+"\n"+
+//                "Negative count: "+negatives+"\n"+
+//                "Indices of zero: "+zeroCells.toString()
+//        );
 
+
+        /*
+        * in the first case, check to see which is larger
+        *   the product of the two smallest negatives
+        *                   or
+        *   the smallest positive integer
+        * drop whichever is smaller from the array
+        * */
         if(!oddNegatives&&zeroCells.size()==0){
-            prod = reduceOmitCells(smallestAbsValI, xs);
+
+            prod = reduceOmitCells(smallestPositiveI, xs);
         }
         if(oddNegatives&&zeroCells.size()==0){
             prod = reduceOmitCells(smallestNegativeI, xs);
@@ -125,28 +155,36 @@ public class Solution {
             prod = reduceOmitCells(indicesToOmit, xs);
         }
 
-        // what if the product of the two smallest negatives is lesser than the smallest positive?
+        // what if the product of the three smallest negatives is lesser than the smallest positive?
 
         return ""+prod;
     }
 
-    private static int reduceOmitCells(int indexToOmit, int[] arrayToReduce) {
-        int prod = 1;
+    private static BigInteger reduceOmitCells(int indexToOmit, int[] arrayToReduce) {
+        BigInteger prod = new BigInteger("1");
         for (int i = 0; i < arrayToReduce.length; i++) {
             if(i!=indexToOmit){
-                prod *= arrayToReduce[i];
+                prod = prod.multiply(new BigInteger(""+arrayToReduce[i]));
             }
         }
         return prod;
     }
-    private static int reduceOmitCells(int[] indexToOmit, int[] arrayToReduce){
-        int prod = 1;
+    private static BigInteger reduceOmitCells(int[] indexToOmit, int[] arrayToReduce){
+        BigInteger prod = new BigInteger("1");
         for(int ind : indexToOmit){
             arrayToReduce[ind] = 1;
         }
         for (int i = 0; i < arrayToReduce.length; i++) {
-            prod *= arrayToReduce[i];
+            prod = prod.multiply(new BigInteger(""+arrayToReduce[i]));
         }
         return prod;
     }
+
+    private static int twoNegCheck(int[] negatives, int positive){
+        if(negatives[0]*negatives[1]<positive){
+            return positive;
+        } else return negatives[0]*negatives[1];
+    }
+
+
 }
