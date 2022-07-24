@@ -18,7 +18,9 @@ public class Solution {
         System.out.println(Arrays.toString(numsArr));
 
         System.out.println(solution(numsArr));
+
     }
+
 
 /*
     Still not passing two tests
@@ -54,11 +56,13 @@ public class Solution {
         // to track smallest values, abs, pos, and neg
         int smallestAbsVal = 0;
         int smallestNegative = 0;
+        int secondSmallestNegative = 0;
         int smallestPositive = 0;
 
         // to track smallest indices
         int smallestAbsValI = -1;
         int smallestNegativeI = -1;
+        int secondSmallestNegativeI = -1;
         int smallestPositiveI = -1;
 
         // need to create arraylist to track indices of zero cells
@@ -83,9 +87,17 @@ public class Solution {
                         smallestNegative = cell;
                         smallestNegativeI = i;
                     }
+                    if(secondSmallestNegative==0){
+                        secondSmallestNegative = cell;
+                        secondSmallestNegativeI = i;
+                    }
                     if(cell > smallestNegative){
                         smallestNegative = cell;
                         smallestNegativeI = i;
+                    }
+                    else if (cell > secondSmallestNegative){
+                        secondSmallestNegative = cell;
+                        secondSmallestNegativeI = i;
                     }
                 }
                 else {
@@ -103,6 +115,9 @@ public class Solution {
             }
         }
 
+        if(zeroCells.size()==xs.length){
+            return "0";
+        }
 //        System.out.println(
 //                "Smallest Absolute Value: "+smallestAbsVal+"\n"+
 //                "Smallest Absolute Value i: "+smallestAbsValI+"\n"+
@@ -110,6 +125,8 @@ public class Solution {
 //                "Smallest Positive Value i: "+smallestPositiveI+"\n"+
 //                "Smallest Negative Value: "+smallestNegative+"\n"+
 //                "Smallest Negative Value i: "+smallestNegativeI+"\n"+
+//                "Second Smallest Negative Value: "+secondSmallestNegative+"\n"+
+//                "Second Smallest Negative Value i: "+secondSmallestNegativeI+"\n"+
 //                "Odd Negatives boolean: "+oddNegatives+"\n"+
 //                "Negative count: "+negatives+"\n"+
 //                "Indices of zero: "+zeroCells.toString()
@@ -124,8 +141,13 @@ public class Solution {
         * drop whichever is smaller from the array
         * */
         if(!oddNegatives&&zeroCells.size()==0){
-
-            prod = reduceOmitCells(smallestPositiveI, xs);
+            if(twoNegGreaterThanOnePos(smallestNegative,secondSmallestNegative,smallestPositive)){
+                prod = reduceOmitCells(smallestPositiveI, xs);
+            }
+            else{
+                int[] smallNegatives = {smallestNegativeI, secondSmallestNegativeI};
+                prod = reduceOmitCells(smallNegatives, xs);
+            }
         }
         if(oddNegatives&&zeroCells.size()==0){
             prod = reduceOmitCells(smallestNegativeI, xs);
@@ -138,14 +160,6 @@ public class Solution {
             prod = reduceOmitCells(indicesToOmit, xs);
         }
 
-        /*
-            this calls for a recursive method that checks
-            whether the input array is better off ejecting the smallest positive or the smallest two negatives
-            if it is better off with the former, return the reduced value
-            if it is better off with the latter,
-                return the procedure run again, passing in the product of the two negatives, and the smallest positive
-            could be done with a while loop as well, but recursion is *probably* simpler logically
-         */
         if(oddNegatives&&zeroCells.size()>0){
             int[] indicesToOmit = new int[zeroCells.size()+1];
             for (int i = 0; i < zeroCells.size(); i++) {
@@ -180,11 +194,9 @@ public class Solution {
         return prod;
     }
 
-    private static int twoNegCheck(int[] negatives, int positive){
-        if(negatives[0]*negatives[1]<positive){
-            return positive;
-        } else return negatives[0]*negatives[1];
+    private static boolean twoNegGreaterThanOnePos(int neg1, int neg2, int pos){
+        if(neg1 * neg2 < pos){
+            return false;
+        } else return true;
     }
-
-
 }
