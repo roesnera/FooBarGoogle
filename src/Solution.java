@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -46,33 +47,32 @@ public class Solution {
 
         for (int i = 0; i < size; i++) {
             int cell = xs[i];
-            System.out.println("Value of cell is: "+cell);
-            if(cell != 0) {
+            System.out.println("Value of cell is: " + cell);
+            if (cell != 0) {
                 if (smallestAbsVal == 0) {
                     smallestAbsVal = Math.abs(cell);
                     smallestAbsValI = i;
-                } else if(Math.abs(cell)<smallestAbsVal) {
+                } else if (Math.abs(cell) < smallestAbsVal) {
                     smallestAbsVal = Math.abs(cell);
                     smallestAbsValI = i;
                 }
                 if (cell < 0) {
                     oddNegatives = !oddNegatives;
                     negatives++;
-                    if(smallestNegative==0){
+                    if (smallestNegative == 0) {
                         smallestNegative = cell;
                         smallestNegativeI = i;
                     }
-                    if(cell > smallestNegative){
+                    if (cell > smallestNegative) {
                         smallestNegative = cell;
                         smallestNegativeI = i;
                     }
-                }
-                else {
-                    if(smallestPositive==0){
+                } else {
+                    if (smallestPositive == 0) {
                         smallestPositive = cell;
                         smallestPositiveI = i;
                     }
-                    if(cell < smallestPositive){
+                    if (cell < smallestPositive) {
                         smallestPositive = cell;
                         smallestPositiveI = i;
                     }
@@ -83,70 +83,63 @@ public class Solution {
         }
 
         System.out.println(
-                "Smallest Absolute Value: "+smallestAbsVal+"\n"+
-                "Smallest Absolute Value i: "+smallestAbsValI+"\n"+
-                "Smallest Positive Value: "+smallestPositive+"\n"+
-                "Smallest Positive Value i: "+smallestPositiveI+"\n"+
-                "Smallest Negative Value: "+smallestNegative+"\n"+
-                "Smallest Negative Value i: "+smallestNegativeI+"\n"+
-                "Odd Negatives boolean: "+oddNegatives+"\n"+
-                "Negative count: "+negatives+"\n"+
-                "Indices of zero: "+zeroCells.toString()
+                "Smallest Absolute Value: " + smallestAbsVal + "\n" +
+                        "Smallest Absolute Value i: " + smallestAbsValI + "\n" +
+                        "Smallest Positive Value: " + smallestPositive + "\n" +
+                        "Smallest Positive Value i: " + smallestPositiveI + "\n" +
+                        "Smallest Negative Value: " + smallestNegative + "\n" +
+                        "Smallest Negative Value i: " + smallestNegativeI + "\n" +
+                        "Odd Negatives boolean: " + oddNegatives + "\n" +
+                        "Negative count: " + negatives + "\n" +
+                        "Indices of zero: " + zeroCells.toString()
         );
 
-        if(!oddNegatives&&zeroCells.size()==0){
-            prod = reduceOmitCells(smallestAbsValI, xs);
+        if(zeroCells.size()==xs.length){
+            return "0";
         }
-        if(oddNegatives&&zeroCells.size()==0){
-            prod = reduceOmitCells(smallestNegativeI, xs);
-        }
-        if(!oddNegatives&&zeroCells.size()>0){
-            int[] indicesToOmit = new int[zeroCells.size()];
-            for (int i = 0; i < zeroCells.size(); i++) {
-                indicesToOmit[i] = zeroCells.get(i);
+        
+        int newListLength = xs.length-zeroCells.size();
+        
+        int[] noZerosList = new int[newListLength];
+        int noZerosIndex = 0;
+
+        for (int i = 0; i < xs.length; i++) {
+            if(!zeroCells.contains(i)){
+                noZerosList[noZerosIndex] = xs[i];
+                noZerosIndex++;
             }
-            prod = reduceOmitCells(indicesToOmit, xs);
         }
 
-        /*
-            this calls for a recursive method that checks
-            whether the input array is better off ejecting the smallest positive or the smallest two negatives
-            if it is better off with the former, return the reduced value
-            if it is better off with the latter,
-                return the procedure run again, passing in the product of the two negatives, and the smallest positive
-            could be done with a while loop as well, but recursion is *probably* simpler logically
-         */
-        if(oddNegatives&&zeroCells.size()>0){
-            int[] indicesToOmit = new int[zeroCells.size()+1];
-            for (int i = 0; i < zeroCells.size(); i++) {
-                indicesToOmit[i] = zeroCells.get(i);
+        if(reduceList(noZerosList).max(new BigInteger("0"))!=new BigInteger("0")){
+            return ""+reduceList(noZerosList);
+        }
+
+        BigInteger largestProduct = new BigInteger("1");
+
+        // on each level, check the total for one index removed against largestProduct, build a layer inside that removes another index and checks the reduced total
+
+        if(noZerosList.length>=3){
+            int len = noZerosList.length;
+            int numCombos = len*(len-1)*(len-2);
+            for (int i = 0; i < numCombos; i++) {
+                int[] lvl1Arr = new int[len-1];
+
+                BigInteger total1Lvl =
             }
-            indicesToOmit[zeroCells.size()] = smallestNegativeI;
-            prod = reduceOmitCells(indicesToOmit, xs);
+        } else if (noZerosList.length==2){
+
+        } else if (noZerosList.length==1){
+
         }
 
-        // what if the product of the two smallest negatives is lesser than the smallest positive?
-
-        return ""+prod;
+        return ansStr;
     }
 
-    private static int reduceOmitCells(int indexToOmit, int[] arrayToReduce) {
-        int prod = 1;
-        for (int i = 0; i < arrayToReduce.length; i++) {
-            if(i!=indexToOmit){
-                prod *= arrayToReduce[i];
-            }
+    private static BigInteger reduceList(int[] List) {
+        BigInteger bigInteger = new BigInteger("1");
+        for( int entry : List){
+            bigInteger = bigInteger.multiply(new BigInteger(""+entry));
         }
-        return prod;
-    }
-    private static int reduceOmitCells(int[] indexToOmit, int[] arrayToReduce){
-        int prod = 1;
-        for(int ind : indexToOmit){
-            arrayToReduce[ind] = 1;
-        }
-        for (int i = 0; i < arrayToReduce.length; i++) {
-            prod *= arrayToReduce[i];
-        }
-        return prod;
+        return bigInteger;
     }
 }
