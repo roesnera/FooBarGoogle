@@ -7,13 +7,13 @@ import java.math.BigInteger;
 public class Solution {
     public static void main(String[] args) {
 
-//        int[] numsArr = new int[10];
+        int[] numsArr = new int[6];
 
-        int[] numsArr = {-3976, 6871, 6663, 10381, -10875, 2270, -926, 12159, -6598, 4996};
+//        int[] numsArr = {-3976, 6871, 6663, 10381, -10875, 2270, -926, 12159, -6598, 4996};
 
-//        for(int i = 0; i<10; i++){
-//            numsArr[i] = (int) Math.floor(Math.random()*30000)-15000;
-//        }
+        for(int i = 0; i<6; i++){
+            numsArr[i] = (int) Math.floor(Math.random()*30000)-15000;
+        }
 
         System.out.println(Arrays.toString(numsArr));
 
@@ -87,7 +87,7 @@ public class Solution {
                         smallestNegative = cell;
                         smallestNegativeI = i;
                     }
-                    if(secondSmallestNegative==0){
+                    else if(secondSmallestNegative==0){
                         secondSmallestNegative = cell;
                         secondSmallestNegativeI = i;
                     }
@@ -141,6 +141,7 @@ public class Solution {
         * drop whichever is smaller from the array
         * */
         if(!oddNegatives&&zeroCells.size()==0){
+            // what if sN and sSN are both 0?
             if(twoNegGreaterThanOnePos(smallestNegative,secondSmallestNegative,smallestPositive)){
                 prod = reduceOmitCells(smallestPositiveI, xs);
             }
