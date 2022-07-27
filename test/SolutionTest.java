@@ -1,19 +1,38 @@
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SolutionTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void solution1() {
-        int act = Solution.solution(19,36);
-        int exp = 1;
+        String act = Solution.solution("1","1");
+        String exp = "0";
 
         assertEquals(exp,act);
     }
 
+    @Test
     void solution2() {
-        int act = Solution.solution(0,1);
-        int exp = 3;
+        String act = Solution.solution("1","2");
+        String exp = "1";
 
-        assertEquals(exp, act);
+        assertEquals(exp,act);
+    }
+
+    @Test
+    void solution3() {
+        String act = Solution.solution("5","2");
+        String exp = "3";
+
+        assertEquals(exp,act);
+    }
+
+    @Test
+    void solution4() {
+        String act = Solution.solution("6","2");
+        String exp = "impossible";
+
+        assertEquals(exp,act);
     }
 }
