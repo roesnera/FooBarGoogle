@@ -15,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SolutionTest {
 
     @Test
+    void solution28() {
+        String act = Solution.solution(new int[] {-1, -1});
+        String exp = "-1";
+
+        assertEquals(exp,act);
+    }
+
+    @Test
     void solution27() {
         String act = Solution.solution(new int[] {-1, 0});
         String exp = "0";

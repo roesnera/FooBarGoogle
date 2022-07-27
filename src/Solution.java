@@ -23,6 +23,10 @@ public class Solution {
         // determining if it is possible to use an even number of, or zero, negative numbers
         // finding the highest multiple given the above
 
+        if(xs.length==1){
+            return ""+xs[0];
+        }
+
         int size = xs.length;
         String ansStr = "";
         int prod = 1;
@@ -174,57 +178,17 @@ public class Solution {
                 noZerosList[i] = temp;
             }
         } else if (noZerosList.length==2){
-            int len = noZerosList.length;
-            for (int j = 0; j < len; j++) {
-                int tempJ = noZerosList[j];
-                noZerosList[j] = 1;
-                BigInteger tempJReduced = reduceList(noZerosList);
-//                System.out.println("On round "+j+" of j loop, \n" +
-//                        "the list is " + Arrays.toString(noZerosList)+"\n" +
-//                        "while temp is:"+tempJ+"\n"+
-//                        "while tempReduced is "+tempJReduced);
-//                System.out.println("-------------------------------------");
-                if(tempJReduced.max(largestProduct).equals(tempJReduced)){
-//                    System.out.println("Largest product assigned: "+tempJReduced);
-                    largestProduct = tempJReduced;
-                }
-                for (int k = 0; k < len; k++) {
-                    if(k==j){
-                        continue;
-                    }
-                    int tempK = noZerosList[k];
-                    noZerosList[k] = 1;
-                    BigInteger tempKReduced = reduceList(noZerosList);
-//                    System.out.println("On round "+k+" of k loop, \n" +
-//                            "the list is " + Arrays.toString(noZerosList)+"\n" +
-//                            "while temp is:"+tempK+"\n"+
-//                            "while tempReduced is "+tempKReduced);
-//                    System.out.println("-------------------------------------");
-                    if(tempKReduced.max(largestProduct).equals(tempKReduced)){
-//                        System.out.println("Largest product assigned: "+tempKReduced);
-                        largestProduct = tempKReduced;
-                    }
-                    noZerosList[k] = tempK;
-                }
-                noZerosList[j] = tempJ;
-            }
+            int len = 2;
+            int temp = noZerosList[0];
+            noZerosList[0] = 1;
+            BigInteger checker1 = reduceList(noZerosList);
+            noZerosList[0] = temp;
+            temp = noZerosList[1];
+            noZerosList[1] = 1;
+            BigInteger checker2 = reduceList(noZerosList);
+            largestProduct = checker2.max(checker1);
         } else if (noZerosList.length==1){
-            int len = noZerosList.length;
-            for (int k = 0; k < len; k++) {
-                int tempK = noZerosList[k];
-                noZerosList[k] = 1;
-                BigInteger tempKReduced = reduceList(noZerosList);
-//                System.out.println("On round "+k+" of k loop, \n" +
-//                        "the list is " + Arrays.toString(noZerosList)+"\n" +
-//                        "while temp is:"+tempK+"\n"+
-//                        "while tempReduced is "+tempKReduced);
-//                System.out.println("-------------------------------------");
-                if(tempKReduced.max(largestProduct).equals(tempKReduced)){
-//                    System.out.println("Largest product assigned: "+tempKReduced);
-                    largestProduct = tempKReduced;
-                }
-                noZerosList[k] = tempK;
-            }
+            return "0";
         }
 
         return ""+largestProduct;
