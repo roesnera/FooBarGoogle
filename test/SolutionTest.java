@@ -35,4 +35,12 @@ class SolutionTest {
 
         assertEquals(exp,act);
     }
+
+    @Test
+    void solution5() {
+        String act = Solution.solution("41","3");
+        String exp = "15";
+
+        assertEquals(exp,act);
+    }
 }
