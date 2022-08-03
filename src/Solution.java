@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Comparator;
 
 public class Solution {
+    static String imp = "impossible";
     public static String solution(String x, String y) {
         // Your code here
         BigInteger machTarget = new BigInteger(x);
@@ -13,83 +14,73 @@ public class Solution {
         BigInteger facCount = new BigInteger("1");
         BigInteger[][] bombCounts = {{machCount,facCount}};
         int numIterations = 0;
-        return recurIterationCheck(machTarget,facTarget,bombCounts,numIterations);
+//        return recurFibBranchCheck(machTarget,facTarget,bombCounts,numIterations);
+        return imp;
     }
 
-    private static String recurIterationCheck(BigInteger x, BigInteger y, BigInteger[][] bombCounts, int numIterations) {
-        boolean isPossible = false;
-        for(BigInteger[] count: bombCounts){
-            if(count[0].equals(x)&&count[1].equals(y)){
-                return ""+numIterations;
+
+//    private static String recurFibBranchCheck(BigInteger machTarget, BigInteger facTarget, BigInteger[][] bombCounts, int numIterations) {
+//        if(numIterations==0){
+//
+//        }
+//
+//
+//        return imp;
+//    }
+
+    public static String recurFibBranchCheck(int machTarget, int facTarget, int[] cell, int numIterations) {
+        if(cell[0]==machTarget&&cell[1]==facTarget){
+            return ""+numIterations;
+        } else if (cell[0]==machTarget) {
+            if(facTarget-cell[1]%cell[0]==0){
+                return ""+(numIterations+facTarget-cell[1]/cell[0]);
+            } else {
+                return imp;
+            }
+        } else if (cell[1]==facTarget) {
+            if (machTarget - cell[0] % cell[1] == 0) {
+                return "" + (numIterations + machTarget - cell[0] / cell[1]);
+            } else {
+                return imp;
+            }
+        } else if (isFib(cell[0],cell[1], machTarget, facTarget)) {
+            int largerFibTarget = Math.max(machTarget, facTarget);
+            System.out.println("Calling whereFib()");
+            return ""+(whereFib(cell[0], cell[1], largerFibTarget, numIterations));
+        } else {
+            if(!(recurFibBranchCheck(machTarget,facTarget,new int[] {cell[0], cell[0]+cell[1]}, numIterations+1)).equals(imp)){
+                return recurFibBranchCheck(machTarget,facTarget,new int[] {cell[0], cell[0]+cell[1]}, numIterations+1);
+            } else if(!(recurFibBranchCheck(machTarget,facTarget,new int[] {cell[1], cell[0]+cell[1]}, numIterations+1)).equals(imp)){
+                return recurFibBranchCheck(machTarget,facTarget,new int[] {cell[1], cell[0]+cell[1]}, numIterations+1);
             }
         }
-        ArrayList<Integer> badCells = new ArrayList<Integer>();
-        /*
-        * Implement Arrays.sort and then reduce array size based on entries that are not possible
-        *   sort in ascending order of first cell values, create a new array that only accepts values below x
-        *   sort in ascending order of second cell values, create a new array that only accepts values below y
-        */
-        for(int i = 0; i<bombCounts.length; i++){
-            BigInteger[] count = bombCounts[i];
-            if(count[0].add(count[1]).max(x).equals(x)&&count[1].add(count[0]).max(y).equals(y)){
-                isPossible = true;
-            }
-            else if(count[0].equals(x)&&count[1].add(count[0]).max(y).equals(y)){
-                isPossible = true;
-            }
-            else if(count[1].equals(y)&&count[0].add(count[1]).max(x).equals(x)){
-                isPossible = true;
-            }
-            else {
-                badCells.add(i);
-            }
-        }
-        if(isPossible) {
-            bombCounts = iterateAllCounts(x, y, bombCounts);
-            numIterations++;
-            return recurIterationCheck(x, y, bombCounts, numIterations);
-        }
-        return "impossible";
+
+
+        return imp;
     }
 
-    private static BigInteger[][] iterateAllCounts(BigInteger x, BigInteger y, BigInteger[][] bombCounts) {
-//        bombCounts = trimList(x, y, bombCounts);
-        int newLen = bombCounts.length*2;
-        BigInteger[][] newBombCounts = new BigInteger[newLen][2];
-        for (int i = 0; i < newLen; i=i+2) {
-            int bombCountsInd = (int) Math.floor(i/2);
-            BigInteger sum = bombCounts[bombCountsInd][0].add(bombCounts[bombCountsInd][1]);
-            newBombCounts[i][0] = sum;
-            newBombCounts[i][1] = bombCounts[bombCountsInd][1];
-            newBombCounts[i+1][0] = bombCounts[bombCountsInd][0];
-            newBombCounts[i+1][1] = sum;
+    public static boolean isFib(int start1, int start2, int maybeFib, int maybeFib2){
+        if(start1>maybeFib&&start2>maybeFib||start1>maybeFib2&&start2>maybeFib2){
+            return false;
         }
-//        newBombCounts = trimList(x,y,newBombCounts);
-        return newBombCounts;
-    }
 
-    private static BigInteger[][] trimList(BigInteger x, BigInteger y, BigInteger[][] bombCounts) {
-        ArrayList<BigInteger[]> newList = new ArrayList<BigInteger[]>();
-        for (BigInteger[] count :
-                bombCounts) {
-           if(checkCell(x,y,count)){
-               newList.add(count);
-           }
-        }
-        BigInteger[][] trimmedList = new BigInteger[newList.size()][2];
-        for (int i = 0; i < newList.size(); i++) {
-            trimmedList[i] = newList.get(i);
-        }
-        return trimmedList;
-    }
-
-    private static boolean checkCell(BigInteger x, BigInteger y, BigInteger[] count) {
-        BigInteger sum = count[1].add(count[0]);
-        boolean equalsX = sum.max(x).equals(x);
-        boolean equalsY = sum.max(y).equals(y);
-        if(equalsX &&count[1].equals(y)|| equalsY &&count[0].equals(x)|| equalsY && equalsX){
+        if(start1==maybeFib&&start2==maybeFib2||start1==maybeFib2&&start2==maybeFib){
             return true;
+        } else {
+            return isFib(start2, start2+start1, maybeFib, maybeFib2);
         }
-        return false;
+    }
+
+    public static int whereFib(int start1, int start2, int defFib, int count){
+        System.out.println("Iteration #: "+count+"\n"+
+                "start1 is: "+start1+"\n"+
+                "start2 is: "+start2+"\n"+
+                "defFib is: "+defFib+"\n"+
+                "count is: "+count);
+        if(start1==defFib||start2==defFib){
+            return count;
+        } else {
+            return whereFib(start2, start2+start1, defFib, count+1);
+        }
     }
 }
